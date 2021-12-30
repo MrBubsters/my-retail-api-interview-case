@@ -1,0 +1,5 @@
+appRegion: us-east-1
+appStage: dev
+appName: my-retail-api
+
+productTable: productTable

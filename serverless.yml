@@ -1,0 +1,91 @@
+org: mrbubsters
+app: my-retail-api
+service: ${self:custom.config.appName}
+
+frameworkVersion: '2'
+
+plugins:
+  - serverless-wsgi
+  - serverless-python-requirements
+
+custom:
+  wsgi:
+    app: app.app
+  #  config: ${file(conf/${opt:runFor, 'dev'}.yml)}
+  config: ${file(config.yml)}
+
+provider:
+  name: aws
+  runtime: python3.7
+  stage: ${self:custom.config.appStage}
+  region: ${self:custom.config.appRegion}
+  deploymentBucket:
+    name: ${self:custom.config.appName}-${self:custom.config.appStage}
+  lambdaHashingVersion: '20201221'
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:CreateTable
+        - dynamodb:DescribeTable
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+        - dynamodb:BatchGetItem
+        - dynamodb:BatchWriteItem
+      Resource: "arn:aws:dynamodb:*:*:*"
+    - Effect: Allow
+      Action:
+        - sqs:DeleteMessage
+        - sqs:ReceiveMessage
+        - sqs:SendMessage
+        - sqs:GetQueueUrl
+        - sqs:ListQueues
+      Resource: "arn:aws:sqs:*:*:*"
+    - Effect: Allow
+      Action:
+        - lambda:InvokeFunction
+        - lambda:InvokeAsync
+      Resource: "*"
+
+functions:
+  api:
+    handler: wsgi_handler.handler
+    events:
+      - http:
+          path: /
+          method: ANY
+      - http:
+          path: /{proxy+}
+          method: ANY
+      - http:
+          path: /products/{proxy+}
+          method: GET
+      - http:
+          path: /products/{proxy+}
+          method: PUT
+      - http:
+          path: /products
+          method: GET
+    environment:
+      PRODUCT_TABLE: ${self:custom.config.productTable}
+      DEPLOYMENT_REGION: ${self:custom.config.appRegion}
+
+resources:
+  Resources:
+    productTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: productTable
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+
