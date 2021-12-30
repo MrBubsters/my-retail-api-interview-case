@@ -88,7 +88,7 @@ resources:
     productTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: productTable
+        TableName: ${self:custom.config.productTable}
         AttributeDefinitions:
           - AttributeName: id
             AttributeType: S
