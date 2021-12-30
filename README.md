@@ -1,30 +1,75 @@
-# Serverless Framework Python Flask API on AWS
+# Movie Retail API example
 
-This template demonstrates how to develop and deploy a simple Python Flask API service running on AWS Lambda using the traditional Serverless Framework.
+The purpose of this project is a code example for an interview. The problem proposed was to create an API that will provide product information for a retail store. Specifically movies being sold, so the data needed were titles, prices and a unique identifier. 
 
+## Deployment Method
+This API uses the Flask API framework for python at it's base. Since Flask does not require and specific database library or server gateway, it allows the API to run seamlessly on microservices. 
 
-## Anatomy of the template
-
-This template configures a single function, `api`, which is responsible for handling all incoming requests thanks to configured `http` events. To learn more about `http` event configuration options, please refer to [http event docs](https://www.serverless.com/framework/docs/providers/aws/events/apigateway/). As the events are configured in a way to accept all incoming requests, `Flask` framework is responsible for routing and handling requests internally. The implementation takes advantage of `serverless-wsgi`, which allows you to wrap WSGI applications such as Flask apps. To learn more about `serverless-wsgi`, please refer to corresponding [GitHub repository](https://github.com/logandk/serverless-wsgi). Additionally, the template relies on `serverless-python-requirements` plugin for packaging dependencies from `requirements.txt` file. For more details about `serverless-python-requirements` configuration, please refer to corresponding [GitHub repository](https://github.com/UnitedIncome/serverless-python-requirements).
-
+To handle the data storage, computation, and routing this application leverages several AWS tools. The code in this repository is run within an AWS Lambda instance. The data is stored in a dynamodb table (NoSQL). Lastly the API gateway is hosted within AWS to traffic requests to the lambda function. 
 ## Usage
+The endpoints are hosted through AWS and require an access key to make a request. These must be included in the authorization for a request to receive a response. 
 
-### Prerequisites
-
-In order to package your dependencies locally with `serverless-python-requirements`, you need to have `Python3.8` installed locally. You can create and activate a dedicated virtual environment with the following command:
-
+Postman documentation for this API can be found here with more examples: [postman documentation](https://documenter.getpostman.com/view/18969743/UVRGF4hQ)
+### GET Products
+This endpoint accepts a product id and will return that single product's information
+####Request:
 ```bash
-python3.8 -m venv ./venv
-source ./venv/bin/activate
+curl --location --request GET 'https://ceyv7xc55b.execute-api.us-east-1.amazonaws.com/dev/products/11525'
+```
+####Returns:
+```json
+{
+  "current_price": {
+    "currency_code": "USD",
+    "value": "99.99"
+  },
+  "id": "11525",
+  "name": "Lawnmower Man 2: Beyond Cyberspace"
+}
 ```
 
-Alternatively, you can also use `dockerizePip` configuration from `serverless-python-requirements`. For details on that, please refer to corresponding [GitHub repository](https://github.com/UnitedIncome/serverless-python-requirements).
-
+### PUT Products
+This endpoint accepts a product id and a *newPrice* in the body of the request. The price of the product is updated and a response message from the database is returned upon successful update. 
+```bash
+curl --location --request PUT 'https://ceyv7xc55b.execute-api.us-east-1.amazonaws.com/dev/products/11525'
+```
+```json
+{
+    "newPrice": "99.99"
+}
+```
+```json
+{
+    "Attributes": {
+        "price": "99.99"
+    },
+    "ResponseMetadata": {
+        "HTTPHeaders": {
+            "connection": "keep-alive",
+            "content-length": "38",
+            "content-type": "application/x-amz-json-1.0",
+            "date": "Thu, 30 Dec 2021 02:01:54 GMT",
+            "server": "Server",
+            "x-amz-crc32": "2059267042",
+            "x-amzn-requestid": "GPPKUEKGT4JPI3E7SERO2H6TTFVV4KQNSO5AEMVJF66Q9ASUAAJG"
+        },
+        "HTTPStatusCode": 200,
+        "RequestId": "GPPKUEKGT4JPI3E7SERO2H6TTFVV4KQNSO5AEMVJF66Q9ASUAAJG",
+        "RetryAttempts": 0
+    }
+}
+```
 ### Deployment
 
-This example is made to work with the Serverless Framework dashboard, which includes advanced features such as CI/CD, monitoring, metrics, etc.
+This project is deployed to microservices using the Serverless Framework.
+####Serverless Requirements:
+Serverless framework is built on *node js* and requires node package manager for plugins.
 
-In order to deploy with dashboard, you need to first login with:
+Follow the links for instructions
+* [serverless framework](https://www.serverless.com/framework/docs/getting-started)
+  - [serverless-wsgi](https://www.npmjs.com/package/serverless-wsgi)
+  - [serverless-python-requirements](https://www.serverless.com/plugins/serverless-python-requirements)
+
 
 ```
 serverless login
@@ -88,58 +133,3 @@ layers:
 ```
 
 _Note_: In current form, after deployment, your API is public and can be invoked by anyone. For production deployments, you might want to configure an authorizer. For details on how to do that, refer to [http event docs](https://www.serverless.com/framework/docs/providers/aws/events/apigateway/).
-
-### Invocation
-
-After successful deployment, you can call the created application via HTTP:
-
-```bash
-curl https://xxxxxxx.execute-api.us-east-1.amazonaws.com/dev/
-```
-
-Which should result in the following response:
-
-```
-{"message":"Hello from root!"}
-```
-
-Calling the `/hello` path with:
-
-```bash
-curl https://xxxxxxx.execute-api.us-east-1.amazonaws.com/dev/hello
-```
-
-Should result in the following response:
-
-```bash
-{"message":"Hello from path!"}
-```
-
-If you try to invoke a path or method that does not have a configured handler, e.g. with:
-
-```bash
-curl https://xxxxxxx.execute-api.us-east-1.amazonaws.com/dev/nonexistent
-```
-
-You should receive the following response:
-
-```bash
-{"error":"Not Found!"}
-```
-
-### Local development
-
-Thanks to capabilities of `serverless-wsgi`, it is also possible to run your application locally, however, in order to do that, you will need to first install `werkzeug` dependency, as well as all other dependencies listed in `requirements.txt`. It is recommended to use a dedicated virtual environment for that purpose. You can install all needed dependencies with the following commands:
-
-```bash
-pip install werkzeug
-pip install -r requirements.txt
-```
-
-At this point, you can run your application locally with the following command:
-
-```bash
-serverless wsgi serve
-```
-
-For additional local development capabilities of `serverless-wsgi` plugin, please refer to corresponding [GitHub repository](https://github.com/logandk/serverless-wsgi).

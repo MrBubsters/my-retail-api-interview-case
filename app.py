@@ -61,24 +61,25 @@ def get_product_from_id(product_id):
     # initialize connection with dynamodb table
     dynamodb = boto3.resource('dynamodb', region_name=deployment_region)
     table = dynamodb.Table(product_table)
+    try:
+        # query table for a matching product id
+        resp = table.query(
+            KeyConditionExpression=Key('id').eq(product_id)
+        )
+        # fetch from dynamo db based on product id
+        items = resp['Items'][0]
 
-    # query table for a matching product id
-    resp = table.query(
-        KeyConditionExpression=Key('id').eq(product_id)
-    )
-    # fetch from dynamo db based on product id
-    items = resp['Items'][0]
-
-    # form data into response format
-    ret = {
-        'id': items['id'],
-        'name': items['original_title'],
-        'current_price': {
-            'value': items['price'],
-            'currency_code': items['currency']
+        # form data into response format
+        ret = {
+            'id': items['id'],
+            'name': items['original_title'],
+            'current_price': {
+                'value': items['price'],
+                'currency_code': items['currency']
+            }
         }
-    }
-
+    except Exception:
+        ret = {"message": "no product found"}
     return jsonify(ret)
 
 

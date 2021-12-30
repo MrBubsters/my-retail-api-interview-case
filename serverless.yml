@@ -57,18 +57,28 @@ functions:
       - http:
           path: /
           method: ANY
+          cors: true
+          authorizer: aws_iam
       - http:
           path: /{proxy+}
           method: ANY
+          cors: true
+          authorizer: aws_iam
       - http:
           path: /products/{proxy+}
           method: GET
+          cors: true
+          authorizer: aws_iam
       - http:
           path: /products/{proxy+}
           method: PUT
+          cors: true
+          authorizer: aws_iam
       - http:
           path: /products
           method: GET
+          cors: true
+          authorizer: aws_iam
     environment:
       PRODUCT_TABLE: ${self:custom.config.productTable}
       DEPLOYMENT_REGION: ${self:custom.config.appRegion}
