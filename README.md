@@ -14,7 +14,7 @@ Postman documentation for this API can be found here with more examples: [postma
 This endpoint accepts a product id and will return that single product's information
 ####Request:
 ```bash
-curl --location --request GET 'https://ceyv7xc55b.execute-api.us-east-1.amazonaws.com/dev/products/11525'
+curl --location --request GET ' https://rwotthgwz1.execute-api.us-east-1.amazonaws.com/dev/products/11525'
 ```
 ####Returns:
 ```json
@@ -31,7 +31,7 @@ curl --location --request GET 'https://ceyv7xc55b.execute-api.us-east-1.amazonaw
 ### PUT Products
 This endpoint accepts a product id and a *newPrice* in the body of the request. The price of the product is updated and a response message from the database is returned upon successful update. 
 ```bash
-curl --location --request PUT 'https://ceyv7xc55b.execute-api.us-east-1.amazonaws.com/dev/products/11525'
+curl --location --request PUT ' https://rwotthgwz1.execute-api.us-east-1.amazonaws.com/dev/products/11525'
 ```
 ```json
 {
