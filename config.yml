@@ -1,14 +1,14 @@
 # development deployment
-appRegion: us-east-1
-appStage: dev
-appName: my-retail-api
-
-productTable: productTableDev
-
-# production deployment
 #appRegion: us-east-1
-#appStage: prod
+#appStage: dev
 #appName: my-retail-api
 #
-#productTable: productTable
+#productTable: productTableDev
+
+# production deployment
+appRegion: us-east-1
+appStage: prod
+appName: my-retail-api
+
+productTable: productTable
 
