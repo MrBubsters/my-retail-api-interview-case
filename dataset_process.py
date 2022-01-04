@@ -26,7 +26,7 @@ for movie in movies_json:
     item = json.loads(json.dumps(movie), parse_float=str)
     print(item)
 
-    table = dynamodb.Table('productTableDev')
+    table = dynamodb.Table('productTable')
     table.put_item(
         Item=item
     )
