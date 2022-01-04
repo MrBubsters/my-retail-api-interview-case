@@ -12,11 +12,11 @@ The endpoints are hosted through AWS and require an access key to make a request
 Postman documentation for this API can be found here with more examples: [postman documentation](https://documenter.getpostman.com/view/18969743/UVRGF4hQ)
 ### GET Products
 This endpoint accepts a product id and will return that single product's information
-####Request:
+#### Request:
 ```bash
 curl --location --request GET 'https://wjjpojgsji.execute-api.us-east-1.amazonaws.com/prod/products/11525'
 ```
-####Returns:
+#### Returns:
 ```json
 {
   "current_price": {
@@ -62,7 +62,7 @@ curl --location --request PUT 'https://wjjpojgsji.execute-api.us-east-1.amazonaw
 ### Deployment
 
 This project is deployed to microservices using the Serverless Framework.
-####Serverless Requirements:
+#### Serverless Requirements:
 Serverless framework is built on *node js* and requires node package manager for plugins.
 
 Follow the links for instructions
